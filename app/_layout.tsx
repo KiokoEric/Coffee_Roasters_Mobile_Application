@@ -1,39 +1,52 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import * as Font from 'expo-font';
+import Hero from '@/components/Hero/Hero';
+import About from '@/components/About/About';
+import Header from '@/components/Header/Header';
+import React, { useState, useEffect } from 'react';
+import Collection from '@/components/Collection/Collection';
+import Instructions from '@/components/Instructions/Instructions';
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Footer from '@/components/Footer/Footer';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+const _layout = () => {
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+  const [fontsLoaded, setFontsLoaded] = useState(true);
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const loadFonts = async () => {
+    await Font.loadAsync({
+      "Fraunces": require('../assets/fonts/Fraunces_144pt-Regular.ttf'),
+      "FrauncesBold": require('../assets/fonts/Fraunces_144pt-Bold.ttf'),
+      "InstrumentSerif": require('../assets/fonts/InstrumentSerif-Regular.ttf'),
+    });
+    setFontsLoaded(true);
+  };
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    loadFonts();
+  }, []);
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView>  
+        <ScrollView>
+          <Header />
+          <Hero />
+          <Collection />
+          <About />
+          <Instructions />
+          <Footer />
+        </ScrollView>
+      </SafeAreaView>
+    </GestureHandlerRootView>
+  )
 }
+
+export default _layout
+
+const styles = StyleSheet.create({
+})
